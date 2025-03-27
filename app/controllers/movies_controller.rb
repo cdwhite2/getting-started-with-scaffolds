@@ -3,6 +3,15 @@ class MoviesController < ApplicationController
     @the_movie = Movie.new
     render "movies/new"
   end
+
+  def edit
+    the_id = params.fetch("id")
+
+    matching_movies = Movie.where({ :id => the_id })
+
+    @the_movie = matching_movies[0]
+    render "movies/edit"
+  end
   
   def index
     matching_movies = Movie.all
@@ -38,17 +47,17 @@ class MoviesController < ApplicationController
 
   def update
     the_id = params.fetch("id")
-    the_movie = Movie.where({ :id => the_id })[0]
+    @the_movie = Movie.where({ :id => the_id })[0]
 
-    the_movie.title = params.fetch("title")
-    the_movie.description = params.fetch("description")
-    the_movie.released = params.fetch("released")
+    @the_movie.title = params.fetch("title")
+    @the_movie.description = params.fetch("description")
+    @the_movie.released = params.fetch("released")
 
-    if the_movie.valid?
-      the_movie.save
-      redirect_to("/movies/#{the_movie.id}", { :notice => "Movie updated successfully."} )
+    if @the_movie.valid?
+      @the_movie.save
+      redirect_to("/movies/#{@the_movie.id}", { :notice => "Movie updated successfully."} )
     else
-      redirect_to("/movies/#{the_movie.id}", { :alert => the_movie.errors.full_messages.to_sentence })
+      render "movies/edit"
     end
   end
 
